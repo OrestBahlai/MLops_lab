@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+mlops_labs/
+.env
+models/
+.ipynb_checkpoints
+mlruns/
+.trash/
+.DS_Store
+/models
