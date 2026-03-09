@@ -1,0 +1,37 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py data/raw/telco_churn.csv data/prepared
+    deps:
+    - path: data/raw/telco_churn.csv
+      hash: md5
+      md5: 0f9de68e012bd3aed5fa7cdc9fc421af
+      size: 977501
+    - path: src/prepare.py
+      hash: md5
+      md5: a3cfeb212060b6ed6dea7f6dc454ce67
+      size: 1280
+    outs:
+    - path: data/prepared
+      hash: md5
+      md5: f00f608ce692966d7030ce0322ae7c9c.dir
+      size: 1176265
+      nfiles: 2
+  train:
+    cmd: python src/train.py data/prepared models
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: f00f608ce692966d7030ce0322ae7c9c.dir
+      size: 1176265
+      nfiles: 2
+    - path: src/train.py
+      hash: md5
+      md5: 5a274351ff3e32e03f40ab34baea120e
+      size: 2439
+    outs:
+    - path: models
+      hash: md5
+      md5: 2d18a2fa2011246dac99bb52358c98a3.dir
+      size: 5613305
+      nfiles: 1
