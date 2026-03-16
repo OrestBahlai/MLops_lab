@@ -33,7 +33,7 @@ def prepare_data(input_file, output_dir):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("!Usage: python prepare.py <input_file> <output_dir>")
+        print("python prepare.py <input_file> <output_dir>")
         sys.exit(1)
         
     input_file_path = sys.argv[1]

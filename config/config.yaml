@@ -1,0 +1,35 @@
+seed: 42
+mlflow:
+  tracking_uri: "sqlite:///mlflow.db"
+  experiment_name: "Telco_Churn_HPO"
+  log_model: true
+  register_model: true
+  model_name: "BestOptimizedRF"
+  stage: "Staging"
+
+data:
+  train_path: "data/prepared/train.csv"
+  test_path: "data/prepared/test.csv"
+  target_col: "Churn"
+
+model:
+  type: "random_forest"
+
+hpo:
+  n_trials: 20
+  sampler: "tpe"  
+  metric: "f1"    
+  direction: "maximize"
+  use_cv: false
+  cv_folds: 5
+
+random_forest:
+  n_estimators: { low: 50, high: 300 }
+  max_depth: { low: 3, high: 15 }
+  min_samples_split: { low: 2, high: 10 }
+  min_samples_leaf: { low: 1, high: 5 }
+
+hydra:
+  run:
+    dir: .
+  output_subdir: null

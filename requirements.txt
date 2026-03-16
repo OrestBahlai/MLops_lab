@@ -5,3 +5,5 @@ matplotlib
 seaborn
 mlflow
 jupyter
+optuna
+hydra-core
