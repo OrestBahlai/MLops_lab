@@ -1,0 +1,58 @@
+name: Model CI/CD Pipeline
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup CML
+        uses: iterative/setup-cml@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13" 
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install dvc pytest iterative-telemetry
+
+      - name: Run pipeline (Train model)
+        run: |
+          # Запускаємо DVC пайплайн для тренування моделі та генерації артефактів
+          dvc repro
+
+      - name: Run tests (Quality Gate)
+        env:
+          F1_THRESHOLD: "0.55"
+        run: |
+          pytest -v
+
+      - name: Create CML report (PR only)
+        if: github.event_name == 'pull_request'
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "## 📊 Model Metrics" > report.md
+          cat models/metrics.json >> report.md
+          
+          echo -e "\n## 📈 Confusion Matrix" >> report.md
+          cml publish models/confusion_matrix.png --md >> report.md
+          
+          echo -e "\n## ✅ Quality Gate" >> report.md
+          echo "F1 threshold: $F1_THRESHOLD" >> report.md
+          
+          cml comment create report.md
